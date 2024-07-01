@@ -1,0 +1,17 @@
+{
+  "name": "movie_db",
+  "version": "1.0.0",
+  "description": "a website project that renders out the data exposed on this API end point.",
+  "main": "server/svr.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server/svr.js"
+  },
+  "author": "Usman Muhammad Kadai",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
