@@ -1,3 +1,40 @@
+// D-pad / remote control navigation
+let focusedIndex = -1;
+
+function focusCard(index) {
+    const cards = document.querySelectorAll('.movie');
+    if (!cards.length) return;
+    focusedIndex = Math.max(0, Math.min(cards.length - 1, index));
+    cards.forEach((c, i) => c.classList.toggle('focused', i === focusedIndex));
+    cards[focusedIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function getColumnsCount() {
+    const cards = [...document.querySelectorAll('.movie')];
+    if (cards.length < 2) return 1;
+    const firstTop = cards[0].getBoundingClientRect().top;
+    let cols = 0;
+    for (const card of cards) {
+        if (Math.abs(card.getBoundingClientRect().top - firstTop) < 5) cols++;
+        else break;
+    }
+    return Math.max(1, cols);
+}
+
+document.addEventListener('keydown', (e) => {
+    const cards = document.querySelectorAll('.movie');
+    if (!cards.length) return;
+    if (focusedIndex === -1) { focusCard(0); return; }
+    const cols = getColumnsCount();
+    switch (e.key) {
+        case 'ArrowRight': e.preventDefault(); focusCard(focusedIndex + 1); break;
+        case 'ArrowLeft':  e.preventDefault(); focusCard(focusedIndex - 1); break;
+        case 'ArrowDown':  e.preventDefault(); focusCard(focusedIndex + cols); break;
+        case 'ArrowUp':    e.preventDefault(); focusCard(focusedIndex - cols); break;
+        case 'Enter':      cards[focusedIndex].click(); break;
+    }
+});
+
 // Add event listener to the 'browse' link
 function addBrowseEventListener() {
     const browseLink = document.querySelector('.browse');
@@ -107,6 +144,7 @@ async function createMovieElements() {
         });
 
         siteContainer.appendChild(moviesDiv);
+        focusCard(0);
     } catch (error) {
         console.error('Error fetching movie data:', error);
     }

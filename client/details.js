@@ -1,3 +1,63 @@
+// D-pad / remote control navigation
+let detailZone = 'back'; // 'back' | 'similar'
+let similarFocusedIndex = 0;
+
+function focusBack() {
+    detailZone = 'back';
+    const backBtn = document.querySelector('.button-container');
+    if (backBtn) backBtn.classList.add('focused');
+    document.querySelectorAll('.similar-movies .movie').forEach(c => c.classList.remove('focused'));
+}
+
+function focusSimilar(index) {
+    detailZone = 'similar';
+    const backBtn = document.querySelector('.button-container');
+    if (backBtn) backBtn.classList.remove('focused');
+    const cards = document.querySelectorAll('.similar-movies .movie');
+    similarFocusedIndex = Math.max(0, Math.min(cards.length - 1, index));
+    cards.forEach((c, i) => c.classList.toggle('focused', i === similarFocusedIndex));
+    const card = cards[similarFocusedIndex];
+    if (card) {
+        const container = document.querySelector('.similar-movies');
+        const cardRect = card.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        container.scrollLeft += cardRect.left - containerRect.left - (containerRect.width - cardRect.width) / 2;
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    switch (e.key) {
+        case 'ArrowDown':
+            e.preventDefault();
+            if (detailZone === 'back' && document.querySelectorAll('.similar-movies .movie').length) {
+                focusSimilar(0);
+            }
+            break;
+        case 'ArrowUp':
+            e.preventDefault();
+            if (detailZone === 'similar') focusBack();
+            break;
+        case 'ArrowLeft':
+            e.preventDefault();
+            if (detailZone === 'similar') focusSimilar(similarFocusedIndex - 1);
+            break;
+        case 'ArrowRight':
+            e.preventDefault();
+            if (detailZone === 'similar') focusSimilar(similarFocusedIndex + 1);
+            break;
+        case 'Enter':
+            e.preventDefault();
+            if (detailZone === 'back') window.location.href = 'index.html';
+            if (detailZone === 'similar') document.querySelectorAll('.similar-movies .movie')[similarFocusedIndex]?.click();
+            break;
+        case 'Escape':
+        case 'Backspace':
+            e.preventDefault();
+            window.location.href = 'index.html';
+            break;
+    }
+});
+
 // Function to add event listener to the 'browse' link
 function addBrowseEventListener() {
     const browseLink = document.querySelector('.browse');
@@ -211,17 +271,9 @@ async function fetchAndDisplayMovieDetails() {
 // Function to fetch and display similar movies
 async function fetchAndDisplaySimilarMovies(genres) {
     const genreIds = genres.map(genre => genre.id).join(',');
-    const similarMoviesUrl = `https://api.themoviedb.org/3/discover/movie?with_genres=${genreIds}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1`;
-    const options = {
-        method: 'GET',
-        headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxMjY3ZGQ4N2U2NDgzMzYyZmI4YTFhYzRlYjQxOGQyYSIsIm5iZiI6MTcxOTMxODQzOS4wMzQwODMsInN1YiI6IjY2N2FhZDY5Y2FmZGQwNjhlNmEwYWNmMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.hs88N37hPwnCK7CX6WSYm8l1V90SQ0pGFeEyUIS9Pd8'
-        }
-    };
 
     try {
-        const response = await fetch(similarMoviesUrl, options);
+        const response = await fetch(`/api/movies/similar?genreIds=${genreIds}`);
         const data = await response.json();
         const similarMovies = data.results.filter(movie => 
             movie.genre_ids.some(genreId => genreIds.includes(genreId))
@@ -328,6 +380,7 @@ async function init() {
     addBrowseEventListener();
     addButtonContainerEventListener();
     addSiteLogoEventListener();
+    focusBack();
 }
 
 window.addEventListener('load', init);
