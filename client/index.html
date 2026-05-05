@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- <div class="container"> -->
         <header class="site-header">
 
             <div class="container">
@@ -23,17 +22,31 @@
                     </svg></div>
                 <nav class="nav-container">
                     <a href="#" class="browse">Browse</a>
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search movies…" autocomplete="off" />
+                        <button class="search-clear" aria-label="Clear search">✕</button>
+                    </div>
                 </nav>
             </div>
         </header>
 
+        <div class="filter-bar">
+            <select class="filter-select" id="filter-genre">
+                <option value="">All Genres</option>
+            </select>
+            <select class="filter-select" id="filter-year">
+                <option value="">Any Year</option>
+            </select>
+            <div class="duration-filters">
+                <button class="filter-btn active" data-duration="">Any</button>
+                <button class="filter-btn" data-duration="short">&lt; 90 min</button>
+                <button class="filter-btn" data-duration="medium">90 – 150 min</button>
+                <button class="filter-btn" data-duration="long">&gt; 150 min</button>
+            </div>
+            <button class="filter-reset">Clear</button>
+        </div>
+
         <div class="site-container"></div>
-    <!-- </div> -->
     <script src="index.js"></script>
 </body>
 </html>
-
-
-
-
-
