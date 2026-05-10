@@ -495,8 +495,8 @@ body {
 
   .movie-overview-img {
     margin-left: 0;
-    width: 400px;
-    height: 615px;
+    width: auto;
+    height: auto;
   }
 
   .movie-overview {
